@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Fuel Calculator — Azur Air</title>
+
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230a2a43'/%3E%3Crect x='0' y='0' width='100' height='14' fill='%23c8102e'/%3E%3Ctext x='50' y='55' font-family='Arial, sans-serif' font-size='17' font-weight='900' fill='%23ffffff' text-anchor='middle' letter-spacing='0'%3EFUEL%3C/text%3E%3Ctext x='50' y='75' font-family='Arial, sans-serif' font-size='12' font-weight='700' fill='%2393c5fd' text-anchor='middle' letter-spacing='0'%3ECALCULATOR%3C/text%3E%3C/svg%3E">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230a2a43'/%3E%3Crect x='0' y='0' width='100' height='14' fill='%23c8102e'/%3E%3Ctext x='50' y='55' font-family='Arial, sans-serif' font-size='17' font-weight='900' fill='%23ffffff' text-anchor='middle' letter-spacing='0'%3EFUEL%3C/text%3E%3Ctext x='50' y='75' font-family='Arial, sans-serif' font-size='12' font-weight='700' fill='%2393c5fd' text-anchor='middle' letter-spacing='0'%3ECALCULATOR%3C/text%3E%3C/svg%3E">
+  <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22%22%2C%22short_name%22%3A%22%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230f172a%22%2C%22theme_color%22%3A%22%230f172a%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%2520xmlns%253D%2527http%253A%2F%2Fwww.w3.org%2F2000%2Fsvg%2527%2520viewBox%253D%25270%25200%2520100%2520100%2527%253E%253Crect%2520width%253D%2527100%2527%2520height%253D%2527100%2527%2520rx%253D%252722%2527%2520fill%253D%2527%25230a2a43%2527%2F%253E%253Crect%2520x%253D%25270%2527%2520y%253D%25270%2527%2520width%253D%2527100%2527%2520height%253D%252714%2527%2520fill%253D%2527%2523c8102e%2527%2F%253E%253Ctext%2520x%253D%252750%2527%2520y%253D%252755%2527%2520font-family%253D%2527Arial%252C%2520sans-serif%2527%2520font-size%253D%252717%2527%2520font-weight%253D%2527900%2527%2520fill%253D%2527%2523ffffff%2527%2520text-anchor%253D%2527middle%2527%2520letter-spacing%253D%25270%2527%253EFUEL%253C%2Ftext%253E%253Ctext%2520x%253D%252750%2527%2520y%253D%252775%2527%2520font-family%253D%2527Arial%252C%2520sans-serif%2527%2520font-size%253D%252712%2527%2520font-weight%253D%2527700%2527%2520fill%253D%2527%252393c5fd%2527%2520text-anchor%253D%2527middle%2527%2520letter-spacing%253D%25270%2527%253ECALCULATOR%253C%2Ftext%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22100x100%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background: #0f172a;
+      color: #f8fafc;
+      -webkit-text-size-adjust: 100%;
+    }
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: env(safe-area-inset-top) 0 calc(env(safe-area-inset-bottom) + 12px);
+    }
+    .app {
+      width: 100%;
+      max-width: 480px;
+      padding: 20px 18px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* === Шапка === */
+    .header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 0 0 4px;
+    }
+    .title-badge {
+      position: relative;
+      width: 100%;
+      padding: 16px 20px 14px;
+      background: linear-gradient(135deg, #0a2a43 0%, #0f3a5f 100%);
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      box-shadow: 0 6px 20px -6px rgba(10, 42, 67, 0.8);
+    }
+    .title-badge::before {
+      content: '';
+      position: absolute;
+      right: -20px;
+      bottom: -30px;
+      width: 120px;
+      height: 120px;
+      background: #c8102e;
+      border-radius: 50%;
+      opacity: 0.18;
+      transform: rotate(-15deg);
+    }
+    .title-badge::after {
+      content: '';
+      position: absolute;
+      left: -30px;
+      top: -30px;
+      width: 100px;
+      height: 100px;
+      background: #3b82f6;
+      border-radius: 50%;
+      opacity: 0.12;
+    }
+    .title-main {
+      position: relative;
+      z-index: 1;
+      font-size: 1.5rem;
+      font-weight: 900;
+      letter-spacing: 3px;
+      color: #ffffff;
+      text-transform: uppercase;
+      line-height: 1.1;
+      text-align: center;
+    }
+    .title-main .accent {
+      color: #c8102e;
+      position: relative;
+      display: inline-block;
+    }
+    .title-main .accent::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -6px;
+      width: 100%;
+      height: 3px;
+      background: #c8102e;
+      border-radius: 2px;
+      transform: skewX(-20deg);
+    }
+    .title-sub {
+      position: relative;
+      z-index: 1;
+      margin-top: 6px;
+      font-size: 0.62rem;
+      letter-spacing: 4px;
+      color: #93c5fd;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .credit {
+      font-size: 0.65rem;
+      color: #475569;
+      letter-spacing: 0.6px;
+      text-align: center;
+    }
+
+    /* === Вкладки === */
+    .tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 2px;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 6px 8px;
+      background: #1e293b;
+      border: 1.5px solid #334155;
+      border-radius: 10px;
+      color: #94a3b8;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab-btn.active {
+      background: #1e3a5f;
+      border-color: #3b82f6;
+      color: #bfdbfe;
+      box-shadow: 0 3px 8px -3px rgba(59, 130, 246, 0.4);
+    }
+
+    /* === Поля ввода === */
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .field label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.6px;
+      color: #94a3b8;
+      text-transform: uppercase;
+      padding-left: 2px;
+      transition: color 0.2s;
+    }
+    .field input {
+      width: 100%;
+      padding: 16px 18px;
+      background: #1e293b;
+      border: 1.5px solid #334155;
+      border-radius: 16px;
+      color: #f8fafc;
+      font-size: 1.25rem;
+      font-weight: 600;
+      text-align: right;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s, background 0.2s, color 0.2s;
+      font-variant-numeric: tabular-nums;
+    }
+    .field input:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.25);
+    }
+    .field input:read-only {
+      color: #93c5fd;
+      border-color: #1e40af;
+      background: #172033;
+    }
+    .field input[type=number]::-webkit-outer-spin-button,
+    .field input[type=number]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    .field input[type=number] {
+      -moz-appearance: textfield;
+      appearance: textfield;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 10px;
+    }
+    .input-row .field {
+      flex: 1;
+    }
+
+    /* === Подсветки === */
+    .field.field-green label { color: #86efac; }
+    .field.field-green input {
+      border-color: #22c55e;
+      background: #14281d;
+      color: #86efac;
+      cursor: default;
+    }
+    .field.field-green input:focus {
+      border-color: #22c55e;
+      box-shadow: none;
+    }
+
+    .field.field-blue-active label { color: #bfdbfe; }
+    .field.field-blue-active input,
+    .field.field-blue-active input:read-only {
+      background: #0f2946;
+      border-color: #2563eb;
+      color: #bfdbfe;
+      box-shadow: 0 0 0 1.5px #3b82f6, 0 4px 12px -4px rgba(59, 130, 246, 0.3);
+    }
+    .field.field-blue-active input:focus {
+      border-color: #60a5fa;
+      box-shadow: 0 0 0 1.5px #60a5fa, 0 0 0 5px rgba(59, 130, 246, 0.2);
+    }
+
+    .field.field-green-active label { color: #bbf7d0; }
+    .field.field-green-active input {
+      background: #0a3d1f;
+      border-color: #16a34a;
+      color: #bbf7d0;
+      cursor: default;
+      box-shadow: 0 0 0 1.5px #22c55e, 0 4px 12px -4px rgba(34, 197, 94, 0.3);
+    }
+    .field.field-green-active input:focus {
+      border-color: #4ade80;
+      box-shadow: 0 0 0 1.5px #4ade80, 0 0 0 5px rgba(34, 197, 94, 0.2);
+    }
+
+    .divider {
+      margin: 8px 0 4px;
+      height: 1px;
+      background: #334155;
+      border: none;
+    }
+
+    .reset-btn {
+      margin-top: 8px;
+      width: 100%;
+      padding: 16px 18px;
+      background: transparent;
+      border: 1.5px solid #475569;
+      border-radius: 16px;
+      color: #cbd5e1;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.05s;
+    }
+    .reset-btn:active {
+      background: #1e293b;
+      border-color: #64748b;
+      color: #f8fafc;
+      transform: scale(0.98);
+    }
+
+    .tab-content { display: none; flex-direction: column; gap: 14px; }
+    .tab-content.active { display: flex; }
+
+    @media (max-height: 600px) and (orientation: landscape) {
+      .app { padding-top: 8px; gap: 8px; max-width: 720px; }
+      .header { flex-direction: row; justify-content: space-between; padding: 0; gap: 12px; }
+      .title-badge { padding: 10px 16px; }
+      .title-main { font-size: 1.1rem; }
+      .field input { padding: 10px 14px; font-size: 1rem; }
+      .reset-btn { padding: 10px 14px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="header">
+      <div class="title-badge">
+        <div class="title-main">FUEL <span class="accent">CALCULATOR</span></div>
+        <div class="title-sub">AZUR AIR</div>
+      </div>
+      <div class="credit">by Denis Gorelskii</div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" id="btnTab1" onclick="switchTab('tab1')">Одно требование</button>
+      <button class="tab-btn" id="btnTab2" onclick="switchTab('tab2')">Два требования</button>
+    </div>
+
+    <div id="swipeArea">
+      <!-- ==================== ВКЛАДКА 1 ==================== -->
+      <div id="tab1" class="tab-content active">
+        <div class="field">
+          <label for="remainingFuel">REMAINING FUEL (Kg)</label>
+          <input type="number" id="remainingFuel" step="1" min="0" inputmode="decimal" placeholder="">
+        </div>
+
+        <div class="field field-green" id="fieldFuelUsed">
+          <label for="fuelUsed">MAINT FUEL USED (Kg)</label>
+          <input type="text" id="fuelUsed" readonly placeholder="" inputmode="none" tabindex="-1">
+        </div>
+
+        <div class="field field-green" id="fieldBefore">
+          <label for="before">BEFORE UPLIFT (kg)</label>
+          <input type="text" id="before" readonly placeholder="" inputmode="none" tabindex="-1">
+        </div>
+
+        <div class="field" id="fieldAddedLt">
+          <label for="addedLt">ADDED (Lt)</label>
+          <input type="number" id="addedLt" step="0.1" min="0" inputmode="decimal" placeholder="">
+        </div>
+
+        <div class="field" id="fieldDensity">
+          <label for="density">DENSITY</label>
+          <input type="text" id="density" inputmode="decimal" placeholder="" autocomplete="off">
+        </div>
+
+        <div class="field" id="fieldAddedKg">
+          <label for="addedKg">ADDED (Kg)</label>
+          <input type="text" id="addedKg" readonly placeholder="" inputmode="none" tabindex="-1">
+        </div>
+
+        <div class="field" id="fieldIndicated">
+          <label for="indicatedTotal">INDICATED TOTAL (Kg)</label>
+          <input type="number" id="indicatedTotal" step="1" min="0" inputmode="decimal" placeholder="">
+        </div>
+
+        <hr class="divider">
+        <button type="button" class="reset-btn" onclick="resetSingle()">Сброс</button>
+      </div>
+
+      <!-- ==================== ВКЛАДКА 2 ==================== -->
+      <div id="tab2" class="tab-content">
+        <div class="field">
+          <label for="remainingFuel2">REMAINING FUEL (Kg)</label>
+          <input type="number" id="remainingFuel2" step="1" min="0" inputmode="decimal" placeholder="">
+        </div>
+
+        <div class="field field-green" id="fieldFuelUsed2">
+          <label for="fuelUsed2">MAINT FUEL USED (Kg)</label>
+          <input type="text" id="fuelUsed2" readonly placeholder="" inputmode="none" tabindex="-1">
+        </div>
+
+        <div class="field field-green" id="fieldBefore2">
+          <label for="before2">BEFORE UPLIFT (kg)</label>
+          <input type="text" id="before2" readonly placeholder="" inputmode="none" tabindex="-1">
+        </div>
+
+        <div class="input-row">
+          <div class="field" id="fieldAddedLt2">
+            <label for="addedLt2">1. ADDED (Lt)</label>
+            <input type="number" id="addedLt2" step="0.1" min="0" inputmode="decimal" placeholder="">
+          </div>
+          <div class="field" id="fieldAddedLt2b">
+            <label for="addedLt2b">2. ADDED (Lt)</label>
+            <input type="number" id="addedLt2b" step="0.1" min="0" inputmode="decimal" placeholder="">
+          </div>
+        </div>
+
+        <div class="input-row">
+          <div class="field" id="fieldDensity2">
+            <label for="density2">1. DENSITY</label>
+            <input type="text" id="density2" inputmode="decimal" placeholder="" autocomplete="off">
+          </div>
+          <div class="field" id="fieldDensity2b">
+            <label for="density2b">2. DENSITY</label>
+            <input type="text" id="density2b" inputmode="decimal" placeholder="" autocomplete="off">
+          </div>
+        </div>
+
+        <div class="field" id="fieldAddedKg2">
+          <label for="addedKg2">ADDED (Kg)</label>
+          <input type="text" id="addedKg2" readonly placeholder="" inputmode="none" tabindex="-1">
+        </div>
+
+        <div class="field" id="fieldIndicated2">
+          <label for="indicatedTotal2">INDICATED TOTAL (Kg)</label>
+          <input type="number" id="indicatedTotal2" step="1" min="0" inputmode="decimal" placeholder="">
+        </div>
+
+        <hr class="divider">
+        <button type="button" class="reset-btn" onclick="resetDouble()">Сброс</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // === Переключение вкладок ===
+    let currentTab = 'tab1';
+
+    function switchTab(tabId) {
+      currentTab = tabId;
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      
+      document.getElementById('btnTab1').classList.toggle('active', tabId === 'tab1');
+      document.getElementById('btnTab2').classList.toggle('active', tabId === 'tab2');
+    }
+
+    // === Свайпы ===
+    let touchStartX = 0;
+    let touchEndX = 0;
+    const swipeArea = document.getElementById('swipeArea');
+
+    swipeArea.addEventListener('touchstart', e => {
+      if (e.target.tagName === 'INPUT') return;
+      touchStartX = e.changedTouches[0].screenX;
+    }, {passive: true});
+
+    swipeArea.addEventListener('touchend', e => {
+      if (e.target.tagName === 'INPUT') return;
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe();
+    }, {passive: true});
+
+    function handleSwipe() {
+      const swipeThreshold = 50;
+      const diff = touchEndX - touchStartX;
+
+      if (diff < -swipeThreshold) {
+        if (currentTab !== 'tab2') switchTab('tab2');
+      } else if (diff > swipeThreshold) {
+        if (currentTab !== 'tab1') switchTab('tab1');
+      }
+    }
+
+    // === Общие функции ===
+    function num(el) {
+      const v = parseFloat(el.value);
+      return isNaN(v) || !isFinite(v) ? 0 : v;
+    }
+    function rnd(value) {
+      const n = parseFloat(value);
+      if (isNaN(n) || !isFinite(n)) return 0;
+      return Math.round(n);
+    }
+    function isFilled(el) {
+      const s = el.value.trim();
+      return s !== '' && !isNaN(parseFloat(s));
+    }
+    // Проверка, что введено ровно 5 символов
+    function has5Chars(el) {
+      return el.value.trim().length === 5;
+    }
+    function normalizeDensity(raw) {
+      let s = raw.replace(',', '.');
+      s = s.replace(/[^0-9.]/g, '');
+      if (s.startsWith('.')) s = '0' + s;
+      const firstDot = s.indexOf('.');
+      if (firstDot !== -1) {
+        s = s.slice(0, firstDot + 1) + s.slice(firstDot + 1).replace(/\./g, '');
+      }
+      return s;
+    }
+
+    // ==================== ВКЛАДКА 1 ====================
+    const remainingFuelInput  = document.getElementById('remainingFuel');
+    const beforeInput         = document.getElementById('before');
+    const addedLtInput        = document.getElementById('addedLt');
+    const densityInput        = document.getElementById('density');
+    const addedKgInput        = document.getElementById('addedKg');
+    const indicatedTotalInput = document.getElementById('indicatedTotal');
+    const fuelUsedInput       = document.getElementById('fuelUsed');
+    const fieldFuelUsed  = document.getElementById('fieldFuelUsed');
+    const fieldBefore    = document.getElementById('fieldBefore');
+    const fieldAddedLt   = document.getElementById('fieldAddedLt');
+    const fieldDensity   = document.getElementById('fieldDensity');
+    const fieldAddedKg   = document.getElementById('fieldAddedKg');
+    const fieldIndicated = document.getElementById('fieldIndicated');
+
+    densityInput.addEventListener('input', () => {
+      const normalized = normalizeDensity(densityInput.value);
+      if (normalized !== densityInput.value) densityInput.value = normalized;
+      calculateSingle();
+    });
+
+    function clearHighlightsSingle() {
+      fieldFuelUsed.classList.remove('field-green-active');
+      fieldBefore.classList.remove('field-blue-active');
+      fieldAddedLt.classList.remove('field-blue-active');
+      fieldDensity.classList.remove('field-blue-active');
+      fieldAddedKg.classList.remove('field-blue-active');
+      fieldIndicated.classList.remove('field-blue-active');
+    }
+
+    function calculateSingle() {
+      const addedLt   = num(addedLtInput);
+      const density   = num(densityInput);
+      const indicated = num(indicatedTotalInput);
+      const remaining = num(remainingFuelInput);
+
+      const addedKg  = addedLt * density;
+      
+      // Условие: всё заполнено И в INDICATED TOTAL ровно 5 символов
+      const allFilled = 
+        isFilled(remainingFuelInput) && 
+        isFilled(addedLtInput) && 
+        isFilled(densityInput) && 
+        has5Chars(indicatedTotalInput);
+
+      addedKgInput.value = addedLt === 0 || density === 0 ? '' : String(rnd(addedKg));
+      clearHighlightsSingle();
+
+      if (!allFilled) {
+        fuelUsedInput.value = '';
+        beforeInput.value = '';
+        return;
+      }
+
+      const fuelUsed = Math.abs(rnd(indicated - (addedKg + remaining)));
+      const before   = rnd(remaining - fuelUsed);
+
+      fuelUsedInput.value = String(fuelUsed);
+      beforeInput.value   = String(before);
+
+      fieldFuelUsed.classList.add('field-green-active');
+      fieldBefore.classList.add('field-blue-active');
+      fieldAddedLt.classList.add('field-blue-active');
+      fieldDensity.classList.add('field-blue-active');
+      fieldAddedKg.classList.add('field-blue-active');
+      fieldIndicated.classList.add('field-blue-active');
+    }
+
+    function resetSingle() {
+      [remainingFuelInput, addedLtInput, densityInput, indicatedTotalInput].forEach(el => el.value = '');
+      fuelUsedInput.value = '';
+      beforeInput.value = '';
+      addedKgInput.value = '';
+      clearHighlightsSingle();
+      remainingFuelInput.focus();
+    }
+
+    [remainingFuelInput, addedLtInput, indicatedTotalInput].forEach(input => {
+      input.addEventListener('input', calculateSingle);
+      input.addEventListener('change', calculateSingle);
+    });
+
+
+    // ==================== ВКЛАДКА 2 ====================
+    const remainingFuelInput2  = document.getElementById('remainingFuel2');
+    const beforeInput2         = document.getElementById('before2');
+    const addedLtInput2        = document.getElementById('addedLt2');
+    const densityInput2        = document.getElementById('density2');
+    const addedLtInput2b       = document.getElementById('addedLt2b');
+    const densityInput2b       = document.getElementById('density2b');
+    const addedKgInput2        = document.getElementById('addedKg2');
+    const indicatedTotalInput2 = document.getElementById('indicatedTotal2');
+    const fuelUsedInput2       = document.getElementById('fuelUsed2');
+
+    const fieldFuelUsed2  = document.getElementById('fieldFuelUsed2');
+    const fieldBefore2    = document.getElementById('fieldBefore2');
+    const fieldAddedLt2   = document.getElementById('fieldAddedLt2');
+    const fieldDensity2   = document.getElementById('fieldDensity2');
+    const fieldAddedLt2b  = document.getElementById('fieldAddedLt2b');
+    const fieldDensity2b  = document.getElementById('fieldDensity2b');
+    const fieldAddedKg2   = document.getElementById('fieldAddedKg2');
+    const fieldIndicated2 = document.getElementById('fieldIndicated2');
+
+    function bindDensity(inputEl, calcFn) {
+      inputEl.addEventListener('input', () => {
+        const normalized = normalizeDensity(inputEl.value);
+        if (normalized !== inputEl.value) inputEl.value = normalized;
+        calcFn();
+      });
+    }
+    bindDensity(densityInput2, calculateDouble);
+    bindDensity(densityInput2b, calculateDouble);
+
+    function clearHighlightsDouble() {
+      fieldFuelUsed2.classList.remove('field-green-active');
+      fieldBefore2.classList.remove('field-blue-active');
+      fieldAddedLt2.classList.remove('field-blue-active');
+      fieldDensity2.classList.remove('field-blue-active');
+      fieldAddedLt2b.classList.remove('field-blue-active');
+      fieldDensity2b.classList.remove('field-blue-active');
+      fieldAddedKg2.classList.remove('field-blue-active');
+      fieldIndicated2.classList.remove('field-blue-active');
+    }
+
+    function calculateDouble() {
+      const addedLt1   = num(addedLtInput2);
+      const density1   = num(densityInput2);
+      const addedLt2   = num(addedLtInput2b);
+      const density2   = num(densityInput2b);
+      const indicated  = num(indicatedTotalInput2);
+      const remaining  = num(remainingFuelInput2);
+
+      const addedKg = (addedLt1 * density1) + (addedLt2 * density2);
+
+      // Условие: всё заполнено И в INDICATED TOTAL ровно 5 символов
+      const allFilled = 
+        isFilled(remainingFuelInput2) && 
+        isFilled(addedLtInput2) && 
+        isFilled(densityInput2) && 
+        isFilled(addedLtInput2b) && 
+        isFilled(densityInput2b) && 
+        has5Chars(indicatedTotalInput2);
+
+      addedKgInput2.value = addedKg === 0 ? '' : String(rnd(addedKg));
+      clearHighlightsDouble();
+
+      if (!allFilled) {
+        fuelUsedInput2.value = '';
+        beforeInput2.value = '';
+        return;
+      }
+
+      const fuelUsed = Math.abs(rnd(indicated - (addedKg + remaining)));
+      const before   = rnd(remaining - fuelUsed);
+
+      fuelUsedInput2.value = String(fuelUsed);
+      beforeInput2.value   = String(before);
+
+      fieldFuelUsed2.classList.add('field-green-active');
+      fieldBefore2.classList.add('field-blue-active');
+      fieldAddedLt2.classList.add('field-blue-active');
+      fieldDensity2.classList.add('field-blue-active');
+      fieldAddedLt2b.classList.add('field-blue-active');
+      fieldDensity2b.classList.add('field-blue-active');
+      fieldAddedKg2.classList.add('field-blue-active');
+      fieldIndicated2.classList.add('field-blue-active');
+    }
+
+    function resetDouble() {
+      [remainingFuelInput2, addedLtInput2, densityInput2, addedLtInput2b, densityInput2b, indicatedTotalInput2].forEach(el => el.value = '');
+      fuelUsedInput2.value = '';
+      beforeInput2.value = '';
+      addedKgInput2.value = '';
+      clearHighlightsDouble();
+      remainingFuelInput2.focus();
+    }
+
+    [remainingFuelInput2, addedLtInput2, addedLtInput2b, indicatedTotalInput2].forEach(input => {
+      input.addEventListener('input', calculateDouble);
+      input.addEventListener('change', calculateDouble);
+    });
+
+    calculateSingle();
+    calculateDouble();
+  </script>
+</body>
+</html>
